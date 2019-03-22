@@ -3,21 +3,25 @@
 VERSION=1.4.1
 
 SERVER_PORT=8080
-STORAGE_SERVER_URL=https://storage.cancercollaboratory.org
+STORAGE_SERVER_URL=http://localhost:8087
 SERVER_MANAGEMENT_PORT=8081
-ID_URL=https://id.icgc.org
-AUTH_TOKEN=234234
+ID_URL=http://localhost:8086
+AUTH_TOKEN=ad83ebde-a55c-11e7-abc4-cec278b6b50a
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=8082
 DB_NAME=song
 DB_USER=postgres
 DB_PASSWORD=password
-AUTH_SERVER_URL=sdfsdf
-AUTH_SERVER_CLIENTID=sdfsdf
-AUTH_SERVER_CLIENTSECRET=sdfsdf
+AUTH_SERVER_URL=http://localhost:8084/check_token/
+AUTH_SERVER_CLIENTID=3kJhz9pNtC0pFHAxr2SPkUkGjXrkWWqGcnPC0vBP
+AUTH_SERVER_CLIENTSECRET=v9mjRtuEVwpt7cgqnsq6mxtCa5FbUOpKLGh7WX8a1dWbBKfrM3iV3VYMtE60jr3W7GLWtNeYIaJ8EUxPkaInclWVXf64qKdR3IKwyfpDU7JhvWEwIYQYdwV1YAUZjB2e
 
 
-docker run -t --log-driver json-file \
+docker run  \
+    --rm  \
+    --log-driver json-file \
+    --detach \
+    --network host \
     --name song_server_$VERSION \
     -e SERVER_PORT=$SERVER_PORT \
 	-e STORAGE_SERVER_URL=$STORAGE_SERVER_URL \

@@ -10,6 +10,14 @@ ARG SONG_ARTIFACTORY_REPO_NAME
 RUN test -n "$SONG_ARTIFACTORY_REPO_NAME"
 ENV SONG_ARTIFACTORY_REPO_NAME $SONG_ARTIFACTORY_REPO_NAME
 
+RUN apk add --no-cache python3 && \
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    pip3 install --upgrade pip setuptools && \
+    if [ ! -e /usr/bin/pip  ]; then ln -s pip3 /usr/bin/pip ; fi && \
+    if [[ ! -e /usr/bin/python  ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
+    rm -r /root/.cache
+
 # Directory Paths
 ENV SONG_HOME /song-server
 ENV SONG_TOOLS $SONG_HOME/tools
@@ -24,16 +32,10 @@ ENV EXPAND_SCRIPT       $SONG_TOOLS/expand.py
 ENV LOGGING_CONFIG_FILE $SONG_CONF/logback.xml
 ENV INPUT_FILE          $SONG_TEMPLATES/application.properties.template
 ENV OUTPUT_FILE         $SONG_CONF/application-secure.properties
+#ENV OUTPUT_FILE         $SONG_CONF/application.properties
 ENV JAR_FILE            $SONG_LIB/song-server.jar
 
 RUN mkdir -p $SONG_HOME $SONG_TOOLS $SONG_CONF $SONG_TEMPLATES $SONG_LIB $SONG_LOGS
-RUN apk add --no-cache python3 && \
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    pip3 install --upgrade pip setuptools && \
-    if [ ! -e /usr/bin/pip  ]; then ln -s pip3 /usr/bin/pip ; fi && \
-    if [[ ! -e /usr/bin/python  ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi && \
-    rm -r /root/.cache
 
 COPY tools/expand.py  $EXPAND_SCRIPT
 COPY song/application-secure.properties.template $INPUT_FILE
@@ -46,9 +48,8 @@ WORKDIR $SONG_HOME
 CMD python3 $EXPAND_SCRIPT $INPUT_FILE $OUTPUT_FILE && \
     java -Dlog.path=$SONG_LOGS \
     -jar $JAR_FILE \
-    --spring.config.location=classpath:application.yml,file:$SONG_CONF/application-secure.properties \
+    --spring.config.location=classpath:/,file:$SONG_CONF/ \
     --spring.profiles.active=prod,secure,default \
     --logging.config=$LOGGING_CONFIG_FILE
-
 
 #&& FOR_100_YEARS=$((100*365*24*60*60));while true;do sleep $FOR_100_YEARS;done
