@@ -32,7 +32,6 @@ ENV EXPAND_SCRIPT       $SONG_TOOLS/expand.py
 ENV LOGGING_CONFIG_FILE $SONG_CONF/logback.xml
 ENV INPUT_FILE          $SONG_TEMPLATES/application.properties.template
 ENV OUTPUT_FILE         $SONG_CONF/application-secure.properties
-#ENV OUTPUT_FILE         $SONG_CONF/application.properties
 ENV JAR_FILE            $SONG_LIB/song-server.jar
 
 RUN mkdir -p $SONG_HOME $SONG_TOOLS $SONG_CONF $SONG_TEMPLATES $SONG_LIB $SONG_LOGS
