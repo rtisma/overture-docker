@@ -48,7 +48,7 @@ CMD python3 $EXPAND_SCRIPT $INPUT_FILE $OUTPUT_FILE && \
     -jar $JAR_FILE \
     --spring.config.location=classpath:application.yml,file:$SONG_CONF/application-secure.properties \
     --spring.profiles.active=prod,secure,default \
-    --debug \
     --logging.config=$LOGGING_CONFIG_FILE
+
 
 #&& FOR_100_YEARS=$((100*365*24*60*60));while true;do sleep $FOR_100_YEARS;done
