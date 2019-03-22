@@ -25,6 +25,7 @@ ENV SCORE_CONF $SCORE_HOME/conf
 ENV SCORE_TEMPLATES $SCORE_HOME/templates
 ENV SCORE_LIB $SCORE_HOME/lib
 ENV SCORE_LOGS $SCORE_HOME/logs
+ENV SCORE_TMP $SCORE_HOME/tmp
 
 
 # File paths
@@ -32,6 +33,7 @@ ENV EXPAND_SCRIPT       $SCORE_TOOLS/expand.py
 ENV LOGGING_CONFIG_FILE $SCORE_CONF/logback.xml
 ENV INPUT_FILE          $SCORE_TEMPLATES/application.properties.template
 ENV OUTPUT_FILE         $SCORE_CONF/application-secure.properties
+ENV TARBALL_FILE        $SCORE_LIB/score-server.jar
 ENV JAR_FILE            $SCORE_LIB/score-server.jar
 
 RUN mkdir -p $SCORE_HOME $SCORE_TOOLS $SCORE_CONF $SCORE_TEMPLATES $SCORE_LIB $SCORE_LOGS
@@ -40,7 +42,11 @@ COPY tools/expand.py  $EXPAND_SCRIPT
 COPY score/application-secure.properties.template $INPUT_FILE
 COPY score/logback.xml $LOGGING_CONFIG_FILE
 
-RUN wget https://artifacts.oicr.on.ca/artifactory/$SCORE_ARTIFACTORY_REPO_NAME/bio/overture/score-server/$SCORE_VERSION/score-server-$SCORE_VERSION-exec.jar -O $JAR_FILE
+RUN wget https://artifacts.oicr.on.ca/artifactory/${SCORE_ARTIFACTORY_REPO_NAME}/bio/overture/score-server/${SCORE_VERSION}/score-server-${SCORE_VERSION}-dist.tar.gz -O /tmp/score-server.tar.gz && \
+    tar zxvf /tmp/score-server.tar.gz -C /tmp && \
+    mv -f /tmp/score-server-${SCORE_VERSION}  /tmp/score-dist && \
+    cp -f /tmp/score-dist/lib/score-server.jar $JAR_FILE && \
+    rm -rf /tmp/score-server.tar.gz /tmp/score-dist
 
 WORKDIR $SCORE_HOME
 
